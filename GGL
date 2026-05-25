@@ -1,0 +1,1104 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { 
+  ShoppingBag, Check, Search, User, Wallet, CreditCard, ArrowRight, 
+  ShieldCheck, Sparkles, HelpCircle, Send, Star, Menu, X, Flame, 
+  ChevronDown, Phone, Copy, Clock, RefreshCw, MessageSquare, BadgeCheck,
+  CheckCircle2, AlertTriangle, Info, MessageCircle, ExternalLink, Zap,
+  XCircle
+} from 'lucide-react';
+
+const PROMO_ITEMS = [
+  { id: 'p1', amount: '1,000 RUBOX', price: 60000, displayPrice: 'Rp 60K', note: 'Satu Kali Beli', tag: 'TERLARIS' },
+  { id: 'p2', amount: '3,000 RUBOX', price: 150000, displayPrice: 'Rp 150K', note: 'Satu Kali Beli', tag: 'POPULER' },
+  { id: 'p3', amount: '10,000 RUBOX', price: 534000, displayPrice: 'Rp 534K', note: 'Satu Kali Beli', tag: 'SUPER HEMAT' },
+];
+
+const USERNAME_ITEMS = [
+  { id: 'u1', amount: '500 RUBOX', price: 58000, displayPrice: 'Rp 58K', note: 'Instan - Via Group Payout' },
+  { id: 'u2', amount: '1,000 RUBOX', price: 105000, displayPrice: 'Rp 105K', note: 'Instan - Via Group Payout' },
+  { id: 'u3', amount: '2,500 RUBOX', price: 245000, displayPrice: 'Rp 245K', note: 'Instan - Via Group Payout' },
+  { id: 'u4', amount: '5,000 RUBOX', price: 485000, displayPrice: 'Rp 485K', note: 'Instan - Via Group Payout' },
+];
+
+const GAMEPASS_ITEMS = [
+  { id: 'g1', amount: '100 RUBOX', price: 11000, displayPrice: 'Rp 11K', note: 'Proses 5-7 Hari' },
+  { id: 'g2', amount: '200 RUBOX', price: 21000, displayPrice: 'Rp 21K', note: 'Proses 5-7 Hari' },
+  { id: 'g3', amount: '500 RUBOX', price: 53000, displayPrice: 'Rp 53K', note: 'Proses 5-7 Hari' },
+  { id: 'g4', amount: '1,000 RUBOX', price: 97000, displayPrice: 'Rp 97K', note: 'Proses 5-7 Hari' },
+  { id: 'g5', amount: '5,000 RUBOX', price: 437000, displayPrice: 'Rp 437K', note: 'Proses 5-7 Hari' },
+  { id: 'g6', amount: '10,000 RUBOX', price: 784000, displayPrice: 'Rp 784K', note: 'Proses 5-7 Hari' },
+];
+
+const PAYMENT_METHODS = [
+  { id: 'qris', name: 'QRIS (All E-Wallets)', category: 'E-Wallet', fee: 500, logoColor: 'bg-rose-500', status: 'limit' },
+  { id: 'gopay', name: 'GoPay Transfer', category: 'E-Wallet', fee: 0, logoColor: 'bg-sky-500', accountNo: '085862940937', accountName: 'SONY DIRGANTARA' },
+  { id: 'dana', name: 'DANA Transfer', category: 'E-Wallet', fee: 0, logoColor: 'bg-blue-600', accountNo: '085862940937', accountName: 'SONY DIRGANTARA' },
+  { id: 'ovo', name: 'OVO', category: 'E-Wallet', fee: 1200, logoColor: 'bg-indigo-600', status: 'limit' },
+  { id: 'shopeepay', name: 'ShopeePay Transfer', category: 'E-Wallet', fee: 0, logoColor: 'bg-orange-500', accountNo: '085862940937', accountName: 'SONY DIRGANTARA' },
+  { id: 'bca_va', name: 'BCA Virtual Account', category: 'Transfer Bank', fee: 2500, logoColor: 'bg-blue-800', status: 'limit' },
+  { id: 'mandiri_va', name: 'Mandiri Virtual Account', category: 'Transfer Bank', fee: 2500, logoColor: 'bg-yellow-600', status: 'limit' },
+];
+
+const FAQS = [
+  { q: "Berapa lama proses pengiriman Rubox?", a: "Untuk metode Via Username (Group Payout), proses biasanya memakan waktu 5-10 menit. Untuk metode Gamepass, dibutuhkan waktu tunggu (pending) 5-7 hari sesuai kebijakan Roblox." },
+  { q: "Apakah top up di Rubox Store aman?", a: "Sangat aman 100%. Kami hanya membutuhkan Username Roblox Anda, tidak memerlukan password sama sekali. Kami mematuhi Terms of Service dari Roblox." },
+  { q: "Bagaimana cara melakukan pembayaran?", a: "Pilih produk, masukkan Username, pilih metode pembayaran seperti QRIS atau E-Wallet, lalu selesaikan pembayaran. Transaksi Anda akan dideteksi otomatis oleh sistem kami." },
+  { q: "Apa yang harus saya lakukan jika orderan saya pending?", a: "Jika status orderan belum berubah setelah 15 menit pembayaran selesai, hubungi Customer Support kami melalui chatbot di kanan bawah dengan melampirkan ID Transaksi Anda." }
+];
+
+const TESTIMONIALS = [
+  { name: "Rafli_Gamer", rating: 5, comment: "Mantap banget, beli 1000 Rubox langsung masuk gak sampe 5 menit via username! Recommended store!", date: "Barusan" },
+  { name: "SitiKeren99", rating: 5, comment: "Udah sering langganan gamepass disini. Murah banget dibanding tempat lain, adminnya juga ramah pas ditanya lewat bot.", date: "1 jam lalu" },
+  { name: "Budi_Robloxian", rating: 4, comment: "Prosesnya mudah banget dipahami buat pemula. Tinggal scan QRIS langsung beres.", date: "Kemarin" }
+];
+
+const RANDOM_USERNAMES = [
+  'BloxMaster99', 'GamerPro_ID', 'RoboRider_X', 'NinjaBuilder', 'QueenNoob_01', 'KingCreeper', 'ChocoWaffle', 'VoidTraveler'
+];
+
+export default function App() {
+  const [username, setUsername] = useState('');
+  const [isValidating, setIsValidating] = useState(false);
+  const [isValidated, setIsValidated] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [selectedPayment, setSelectedPayment] = useState(null);
+  const [whatsapp, setWhatsapp] = useState('');
+  const [searchInvoice, setSearchInvoice] = useState('');
+  const [foundInvoice, setFoundInvoice] = useState(null);
+  const [activeTab, setActiveTab] = useState('promo');
+  const [isCopied, setIsCopied] = useState(false); 
+  
+  // Mengubah data awal menjadi GAGAL
+  const [simulatedTransactions, setSimulatedTransactions] = useState([
+    { id: 'RBX-82415', username: 'SuperNoobX', amount: '3,000 RUBOX', price: 151000, status: 'GAGAL', date: 'Barusan', payment: 'QRIS' },
+    { id: 'RBX-73918', username: 'Lollipop_Kid', amount: '500 RUBOX', price: 58800, status: 'GAGAL', date: '5 menit lalu', payment: 'DANA' },
+    { id: 'RBX-90182', username: 'Creeper_Steve', amount: '10,000 RUBOX', price: 786500, status: 'PROCESSING', date: '12 menit lalu', payment: 'BCA VA' }
+  ]);
+  
+  const [activeInvoice, setActiveInvoice] = useState(null);
+  const [invoiceModalOpen, setInvoiceModalOpen] = useState(false);
+  const [invoiceStatus, setInvoiceStatus] = useState('PENDING'); // PENDING -> PAID -> PROCESSING -> FAILED
+  const [paymentTimer, setPaymentTimer] = useState(900); 
+  
+  const [liveToast, setLiveToast] = useState(null);
+  
+  const [botOpen, setBotOpen] = useState(false);
+  const [botMessages, setBotMessages] = useState([
+    { sender: 'bot', text: 'Halo Robloxian! 👋 Ada yang bisa saya bantu tentang pembelian RUBOX hari ini?' }
+  ]);
+  const [chatInput, setChatInput] = useState('');
+
+  const [formErrors, setFormErrors] = useState({});
+
+  const chatEndRef = useRef(null);
+
+  const getAvatarSvg = (name) => {
+    const seed = name || 'Rubox';
+    let hash = 0;
+    for (let i = 0; i < seed.length; i++) {
+      hash = seed.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const colorH = Math.abs(hash % 360);
+    const bgGradient = `linear-gradient(135deg, hsl(${colorH}, 70%, 40%), hsl(${(colorH + 120) % 360}, 80%, 25%))`;
+    
+    return (
+      <div className="w-14 h-14 rounded-full flex items-center justify-center font-bold text-white text-xl relative shadow-md" style={{ background: bgGradient }}>
+        {seed.substring(0, 2).toUpperCase()}
+        <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-zinc-900 rounded-full animate-pulse" />
+      </div>
+    );
+  };
+
+  useEffect(() => {
+    const names = ['Andi_Gamer', 'RobloxPro90', 'Cindy_Blox', 'DevCreator', 'LegoBoy', 'SkaterKid', 'Windah_F', 'Zilong99'];
+    const packages = ['1,000 RUBOX', '500 RUBOX', '3,000 RUBOX', '10,000 RUBOX', '100 RUBOX', '5,000 RUBOX'];
+    
+    const interval = setInterval(() => {
+      const randomName = names[Math.floor(Math.random() * names.length)];
+      const randomPackage = packages[Math.floor(Math.random() * packages.length)];
+      setLiveToast({ name: randomName, package: randomPackage });
+      
+      setTimeout(() => {
+        setLiveToast(null);
+      }, 5000);
+    }, 12000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    let timer;
+    if (invoiceModalOpen && invoiceStatus === 'PENDING' && paymentTimer > 0) {
+      timer = setInterval(() => {
+        setPaymentTimer(prev => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [invoiceModalOpen, invoiceStatus, paymentTimer]);
+
+  useEffect(() => {
+    if (chatEndRef.current) {
+        chatEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [botMessages, botOpen]);
+
+  const handleValidateUsername = (e) => {
+    e.preventDefault();
+    if (!username.trim()) return;
+    
+    setIsValidating(true);
+    setIsValidated(false);
+    
+    setTimeout(() => {
+      setIsValidating(false);
+      setIsValidated(true);
+      setFormErrors(prev => ({...prev, username: null}));
+    }, 1200);
+  };
+
+  const handleSelectRandomUsername = () => {
+    const randomName = RANDOM_USERNAMES[Math.floor(Math.random() * RANDOM_USERNAMES.length)];
+    setUsername(randomName);
+    setIsValidated(true);
+    setFormErrors(prev => ({...prev, username: null}));
+  };
+
+  const scrollToSection = (id) => {
+    const el = document.getElementById(id);
+    if (el) {
+        const y = el.getBoundingClientRect().top + window.scrollY - 100;
+        window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  };
+
+  const copyToClipboard = (text) => {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    try {
+      document.execCommand("copy");
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy", err);
+    }
+    document.body.removeChild(textarea);
+  };
+
+  const handleCheckout = () => {
+    const errors = {};
+    if (!username.trim()) errors.username = "Username Roblox wajib diisi!";
+    if (username.trim() && !isValidated) errors.username = "Silakan klik verifikasi username Anda terlebih dahulu!";
+    if (!selectedProduct) errors.product = "Pilih paket RUBOX yang Anda inginkan!";
+    if (!selectedPayment) errors.payment = "Pilih salah satu metode pembayaran!";
+    if (!whatsapp.trim()) {
+      errors.whatsapp = "Nomor WhatsApp wajib diisi!";
+    } else if (!/^[0-9+]{8,15}$/.test(whatsapp)) {
+      errors.whatsapp = "Nomor WhatsApp tidak valid!";
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      if (errors.username) scrollToSection('username-input-section');
+      else if (errors.product) scrollToSection('catalog-section');
+      else if (errors.payment) scrollToSection('payment-section');
+      return;
+    }
+
+    setFormErrors({});
+    
+    const newInvoiceId = `RBX-${Math.floor(10000 + Math.random() * 90000)}`;
+    const totalAmount = selectedProduct.price + selectedPayment.fee;
+    
+    const invoice = {
+      id: newInvoiceId,
+      username: username,
+      amount: selectedProduct.amount,
+      price: selectedProduct.price,
+      fee: selectedPayment.fee,
+      total: totalAmount,
+      payment: selectedPayment.name,
+      paymentId: selectedPayment.id,
+      accountNo: selectedPayment.accountNo,
+      accountName: selectedPayment.accountName,
+      whatsapp: whatsapp,
+      date: 'Barusan',
+      methodType: activeTab === 'gamepass' ? 'Gamepass Method' : 'Username Direct'
+    };
+
+    setActiveInvoice(invoice);
+    setPaymentTimer(900);
+    setInvoiceStatus('PENDING');
+    setInvoiceModalOpen(true);
+  };
+
+  // Mengubah simulasi menjadi gagal
+  const simulatePayment = () => {
+    setInvoiceStatus('PAID');
+    
+    setTimeout(() => {
+      setInvoiceStatus('PROCESSING');
+      
+      setTimeout(() => {
+        setInvoiceStatus('FAILED'); // Diubah menjadi FAILED (Gagal)
+        
+        const failedTx = {
+          id: activeInvoice.id,
+          username: activeInvoice.username,
+          amount: activeInvoice.amount,
+          price: activeInvoice.total,
+          status: 'GAGAL',
+          date: 'Barusan',
+          payment: activeInvoice.payment
+        };
+        setSimulatedTransactions(prev => [failedTx, ...prev]);
+      }, 3500); 
+    }, 2000); 
+  };
+
+  const handleSearchTransaction = (e) => {
+    e.preventDefault();
+    if (!searchInvoice.trim()) return;
+
+    const query = searchInvoice.trim().toUpperCase();
+    const found = simulatedTransactions.find(tx => tx.id.toUpperCase() === query) 
+                  || (activeInvoice && activeInvoice.id.toUpperCase() === query ? {
+                      id: activeInvoice.id,
+                      username: activeInvoice.username,
+                      amount: activeInvoice.amount,
+                      price: activeInvoice.total,
+                      status: invoiceStatus === 'FAILED' ? 'GAGAL' : (invoiceStatus === 'PENDING' ? 'PENDING' : 'PROCESSING'),
+                      date: 'Hari ini',
+                      payment: activeInvoice.payment
+                    } : null);
+
+    if (found) {
+      setFoundInvoice(found);
+    } else {
+      setFoundInvoice({ error: "Transaksi tidak ditemukan. Pastikan ID Transaksi (Contoh: RBX-90182) sudah benar." });
+    }
+  };
+
+  const handleChatSubmit = (e) => {
+    e.preventDefault();
+    if (!chatInput.trim()) return;
+
+    const userMsg = chatInput;
+    setBotMessages(prev => [...prev, { sender: 'user', text: userMsg }]);
+    setChatInput('');
+
+    setTimeout(() => {
+      let reply = "Mohon maaf, saya kurang mengerti. Anda bisa menanyakan 'cara beli', 'berapa lama', 'status pesanan', atau 'metode gamepass'!";
+      const lowerInput = userMsg.toLowerCase();
+
+      if (lowerInput.includes('halo') || lowerInput.includes('hi') || lowerInput.includes('p ')) {
+        reply = "Halo juga! Ada yang bisa saya bantu untuk memudahkan pembelian RUBOX Anda?";
+      } else if (lowerInput.includes('cara beli') || lowerInput.includes('panduan') || lowerInput.includes('cara top up')) {
+        reply = "Caranya sangat mudah!\n1. Ketik Username Roblox kamu di form atas.\n2. Klik Verifikasi.\n3. Pilih salah satu Paket RUBOX.\n4. Pilih metode pembayaran dan isi Nomor WhatsApp.\n5. Klik Beli Sekarang dan lakukan pembayaran!";
+      } else if (lowerInput.includes('gamepass') || lowerInput.includes('vip server')) {
+        reply = "Untuk metode Gamepass, Anda harus memiliki Game/Place publik di akun Anda dan mengaktifkan setelan Gamepass seharga Rubox yang ditentukan agar bisa dibeli oleh bot kami. Proses transfer Rubox membutuhkan holding period 5-7 hari dari Roblox.";
+      } else if (lowerInput.includes('lama') || lowerInput.includes('proses') || lowerInput.includes('kapan')) {
+        reply = "Untuk pengiriman instant (Via Username), hanya membutuhkan waktu 5-10 menit setelah pembayaran dikonfirmasi sistem!";
+      } else if (lowerInput.includes('aman') || lowerInput.includes('banned')) {
+        reply = "Sangat aman! Kami menggunakan jalur legal (Group payout / premium transfer) sehingga akun Anda terbebas dari bahaya ban.";
+      } else if (lowerInput.includes('transaksi') || lowerInput.includes('status') || lowerInput.includes('cek') || lowerInput.includes('belum masuk')) {
+        reply = "Gunakan kolom 'CARI RIWAYAT TRANSAKSI' di bagian bawah website. Masukkan ID transaksi kamu (contoh: RBX-90182) untuk melacak status real-time!";
+      }
+
+      setBotMessages(prev => [...prev, { sender: 'bot', text: reply }]);
+    }, 800);
+  };
+
+  const formatRupiah = (num) => {
+    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(num);
+  };
+
+  const formatTime = (seconds) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  };
+
+  return (
+    <div className="min-h-screen bg-zinc-950 text-white font-sans overflow-x-hidden selection:bg-green-500 selection:text-black">
+      {/* Background Decorative Mesh Glows */}
+      <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-green-500/10 rounded-full filter blur-[100px] pointer-events-none" />
+      <div className="absolute top-[800px] right-1/4 w-[400px] h-[400px] bg-emerald-500/10 rounded-full filter blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-10 left-10 w-[600px] h-[600px] bg-green-600/5 rounded-full filter blur-[150px] pointer-events-none" />
+
+      {/* Navbar */}
+      <nav className="sticky top-0 z-40 bg-zinc-950/80 backdrop-blur-md border-b border-zinc-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center gap-2 cursor-pointer" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
+              <div className="p-2.5 bg-green-500 rounded-xl shadow-lg shadow-green-500/30 flex items-center justify-center">
+                <ShoppingBag className="w-6 h-6 text-black" />
+              </div>
+              <span className="font-black text-2xl tracking-tight">
+                RUBOX<span className="text-green-400">STORE</span>
+              </span>
+            </div>
+            
+            <div className="hidden md:flex items-center gap-8 text-sm font-semibold text-zinc-300">
+              <button onClick={() => scrollToSection('home-hero')} className="hover:text-green-400 transition">Beranda</button>
+              <button onClick={() => scrollToSection('order-form-container')} className="hover:text-green-400 transition">Top Up</button>
+              <button onClick={() => scrollToSection('order-tracker')} className="hover:text-green-400 transition">Cek Transaksi</button>
+              <button onClick={() => scrollToSection('faq-section')} className="hover:text-green-400 transition">FAQ</button>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="hidden lg:inline-flex items-center gap-1 text-xs font-semibold px-3 py-1 bg-green-500/15 text-green-400 border border-green-500/30 rounded-full">
+                <span className="w-2 h-2 bg-green-400 rounded-full animate-ping" />
+                Sistem Online 24/7
+              </span>
+              <button 
+                onClick={() => scrollToSection('order-form-container')}
+                className="px-5 py-2.5 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-black font-extrabold text-sm rounded-xl transition shadow-lg shadow-green-500/20 transform active:scale-95"
+              >
+                MULAI BELI
+              </button>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <header id="home-hero" className="relative z-10 text-center pt-16 pb-12 px-4 sm:px-6 max-w-7xl mx-auto">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-green-500/10 border border-green-400/30 text-green-400 text-sm font-bold mb-6 shadow-lg shadow-green-500/5 animate-bounce">
+          <Zap className="w-4 h-4 fill-green-400" />
+          TOP UP TERMURAH SE-INDONESIA
+        </div>
+
+        <h1 className="text-4xl sm:text-6xl md:text-8xl font-black tracking-tight mb-6 leading-none">
+          TOP UP <span className="bg-gradient-to-r from-green-400 to-emerald-300 bg-clip-text text-transparent drop-shadow-sm">RUBOX</span>
+        </h1>
+
+        <p className="text-zinc-400 max-w-2xl mx-auto text-base sm:text-xl leading-relaxed">
+          Platform top-up Rubox terpercaya, instan, aman tanpa password dengan garansi pelayanan terbaik bertema gaming futuristik.
+        </p>
+
+        <div className="mt-10 flex flex-col sm:flex-row justify-center items-center gap-4">
+          <button 
+            onClick={() => scrollToSection('order-form-container')}
+            className="w-full sm:w-auto px-8 py-4 bg-green-500 hover:bg-green-400 text-black transition-all rounded-2xl font-black text-lg shadow-xl shadow-green-500/30 transform hover:-translate-y-0.5 active:translate-y-0"
+          >
+            BELI SEKARANG 🔥
+          </button>
+          <button 
+            onClick={() => scrollToSection('catalog-section')}
+            className="w-full sm:w-auto px-8 py-4 border border-zinc-700 hover:border-green-400 hover:text-green-300 bg-zinc-900/40 transition-all rounded-2xl font-bold text-lg backdrop-blur-sm"
+          >
+            LIHAT DAFTAR HARGA
+          </button>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-16 max-w-4xl mx-auto text-left">
+          {[
+            { icon: ShieldCheck, title: "100% Aman & Legal", desc: "Sesuai TOS Roblox" },
+            { icon: Clock, title: "Proses Otomatis", desc: "Hanya 5-10 menit saja" },
+            { icon: Wallet, title: "Pembayaran Lengkap", desc: "QRIS, E-Wallet, VA Bank" },
+            { icon: Sparkles, title: "Banyak Promo", desc: "Harga coret tiap hari" }
+          ].map((feature, i) => (
+            <div key={i} className="bg-zinc-900/50 backdrop-blur-sm border border-zinc-800 p-5 rounded-2xl flex flex-col items-start hover:bg-zinc-800/80 transition-colors shadow-lg">
+                <feature.icon className="w-8 h-8 text-green-400 mb-3" />
+                <h3 className="font-bold text-white text-sm md:text-base">{feature.title}</h3>
+                <p className="text-zinc-400 text-xs md:text-sm mt-1">{feature.desc}</p>
+            </div>
+          ))}
+        </div>
+      </header>
+
+      {/* Main Order Form Layout */}
+      <main id="order-form-container" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
+          
+          {/* Left Column (Username & Packages) */}
+          <div className="lg:col-span-7 space-y-6">
+            
+            {/* Step 1: Username */}
+            <div id="username-input-section" className={`bg-zinc-900 border ${formErrors.username ? 'border-red-500 shadow-red-500/20' : 'border-zinc-800'} rounded-3xl p-6 relative overflow-hidden transition-all shadow-xl`}>
+              {isValidated && <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/5 rounded-bl-full pointer-events-none" />}
+              
+              <h2 className="text-xl font-bold flex items-center gap-3 mb-6">
+                <span className="w-8 h-8 rounded-full bg-green-500 text-black flex items-center justify-center font-black">1</span> 
+                Data Akun Roblox
+              </h2>
+              
+              <div className="space-y-4 relative z-10">
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <div className="relative flex-grow">
+                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400" />
+                    <input 
+                      type="text" 
+                      placeholder="Ketik Username Roblox kamu..." 
+                      className={`w-full bg-zinc-950 border ${formErrors.username ? 'border-red-500 focus:border-red-500' : 'border-zinc-700 focus:border-green-500'} rounded-xl pl-12 pr-4 py-4 outline-none text-white font-medium transition-colors`}
+                      value={username}
+                      onChange={(e) => {
+                        setUsername(e.target.value);
+                        setIsValidated(false);
+                        if (formErrors.username) setFormErrors(prev => ({...prev, username: null}));
+                      }}
+                    />
+                  </div>
+                  <button 
+                    onClick={handleValidateUsername}
+                    disabled={!username.trim() || isValidating}
+                    className="bg-zinc-800 hover:bg-zinc-700 disabled:opacity-50 disabled:cursor-not-allowed border border-zinc-700 px-6 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 whitespace-nowrap text-green-400"
+                  >
+                    {isValidating ? <RefreshCw className="w-5 h-5 animate-spin" /> : "Verifikasi"}
+                  </button>
+                </div>
+                
+                {formErrors.username && (
+                  <p className="text-red-400 text-sm font-medium flex items-center gap-2">
+                    <AlertTriangle className="w-4 h-4" /> {formErrors.username}
+                  </p>
+                )}
+
+                {!isValidated && !isValidating && !formErrors.username && (
+                  <p className="text-sm text-zinc-400">Pastikan username sudah benar. <button onClick={handleSelectRandomUsername} className="text-green-400 hover:underline">Gunakan akun testing</button></p>
+                )}
+
+                {isValidated && (
+                  <div className="mt-4 p-4 bg-green-500/10 border border-green-500/20 rounded-xl flex items-center gap-4 animate-fade-in">
+                    {getAvatarSvg(username)}
+                    <div>
+                      <p className="text-sm text-zinc-400">Akun ditemukan</p>
+                      <p className="font-bold text-lg text-white flex items-center gap-2">
+                        {username} <BadgeCheck className="w-5 h-5 text-green-400" />
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Step 2: Product Catalog */}
+            <div id="catalog-section" className={`bg-zinc-900 border ${formErrors.product ? 'border-red-500 shadow-red-500/20' : 'border-zinc-800'} rounded-3xl p-6 shadow-xl transition-all`}>
+              <h2 className="text-xl font-bold flex items-center gap-3 mb-6">
+                <span className="w-8 h-8 rounded-full bg-green-500 text-black flex items-center justify-center font-black">2</span> 
+                Pilih Paket RUBOX
+              </h2>
+
+              <div className="flex overflow-x-auto hide-scrollbar gap-2 mb-6 pb-2 border-b border-zinc-800">
+                <button 
+                  onClick={() => setActiveTab('promo')}
+                  className={`px-5 py-2.5 rounded-lg font-bold text-sm flex-shrink-0 transition-all ${activeTab === 'promo' ? 'bg-green-500 text-black' : 'text-zinc-400 hover:text-white hover:bg-zinc-800'}`}
+                >
+                  🔥 Promo Spesial
+                </button>
+                <button 
+                  onClick={() => setActiveTab('username')}
+                  className={`px-5 py-2.5 rounded-lg font-bold text-sm flex-shrink-0 transition-all ${activeTab === 'username' ? 'bg-green-500 text-black' : 'text-zinc-400 hover:text-white hover:bg-zinc-800'}`}
+                >
+                  ⚡ Via Username (Instan)
+                </button>
+                <button 
+                  onClick={() => setActiveTab('gamepass')}
+                  className={`px-5 py-2.5 rounded-lg font-bold text-sm flex-shrink-0 transition-all ${activeTab === 'gamepass' ? 'bg-green-500 text-black' : 'text-zinc-400 hover:text-white hover:bg-zinc-800'}`}
+                >
+                  🎮 Via Gamepass (Murah)
+                </button>
+              </div>
+
+              {formErrors.product && (
+                  <p className="text-red-400 text-sm font-medium flex items-center gap-2 mb-4 -mt-2">
+                    <AlertTriangle className="w-4 h-4" /> {formErrors.product}
+                  </p>
+              )}
+
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+                {(activeTab === 'promo' ? PROMO_ITEMS : activeTab === 'username' ? USERNAME_ITEMS : GAMEPASS_ITEMS).map((item) => (
+                  <div 
+                    key={item.id}
+                    onClick={() => {
+                      setSelectedProduct(item);
+                      if (formErrors.product) setFormErrors(prev => ({...prev, product: null}));
+                    }}
+                    className={`relative cursor-pointer rounded-2xl p-4 border-2 transition-all ${selectedProduct?.id === item.id ? 'border-green-500 bg-green-500/5 transform scale-[1.02]' : 'border-zinc-800 bg-zinc-950 hover:border-zinc-600'}`}
+                  >
+                    {item.tag && (
+                      <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-green-500 to-emerald-600 text-black text-[10px] font-black px-3 py-1 rounded-full shadow-lg whitespace-nowrap">
+                        {item.tag}
+                      </div>
+                    )}
+                    {selectedProduct?.id === item.id && (
+                      <div className="absolute top-2 right-2 text-green-500">
+                        <CheckCircle2 className="w-5 h-5" />
+                      </div>
+                    )}
+                    <div className="flex flex-col items-center justify-center text-center mt-2">
+                      <div className="w-12 h-12 bg-zinc-900 rounded-full flex items-center justify-center mb-3 border border-zinc-800">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2322c55e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='12 2 2 7 12 12 22 7 12 2'/%3E%3Cpolyline points='2 17 12 22 22 17'/%3E%3Cpolyline points='2 12 12 17 22 12'/%3E%3C/svg%3E" alt="Rb" className="w-6 h-6" />
+                      </div>
+                      <h3 className="font-bold text-white mb-1">{item.amount}</h3>
+                      <p className="text-green-400 font-black mb-2">{item.displayPrice}</p>
+                      <p className="text-[10px] text-zinc-500 px-2 py-1 bg-zinc-900 rounded-md inline-block">{item.note}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column (Payment & Checkout) */}
+          <div className="lg:col-span-5 space-y-6">
+            
+            {/* Step 3: Payment */}
+            <div id="payment-section" className={`bg-zinc-900 border ${formErrors.payment ? 'border-red-500 shadow-red-500/20' : 'border-zinc-800'} rounded-3xl p-6 shadow-xl transition-all`}>
+              <h2 className="text-xl font-bold flex items-center gap-3 mb-6">
+                <span className="w-8 h-8 rounded-full bg-green-500 text-black flex items-center justify-center font-black">3</span> 
+                Pembayaran
+              </h2>
+              
+              {formErrors.payment && (
+                  <p className="text-red-400 text-sm font-medium flex items-center gap-2 mb-4 -mt-2">
+                    <AlertTriangle className="w-4 h-4" /> {formErrors.payment}
+                  </p>
+              )}
+
+              <div className="space-y-3 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar">
+                {PAYMENT_METHODS.map((method) => (
+                  <div 
+                    key={method.id}
+                    onClick={() => {
+                      if (method.status !== 'limit') {
+                        setSelectedPayment(method);
+                        if (formErrors.payment) setFormErrors(prev => ({...prev, payment: null}));
+                      }
+                    }}
+                    className={`flex items-center justify-between p-4 rounded-xl border-2 transition-all ${method.status === 'limit' ? 'opacity-50 cursor-not-allowed border-zinc-800 bg-zinc-950' : selectedPayment?.id === method.id ? 'border-green-500 bg-green-500/5' : 'border-zinc-800 bg-zinc-950 hover:border-zinc-600 cursor-pointer'}`}
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className={`w-12 h-8 ${method.logoColor} rounded-md flex items-center justify-center text-[10px] font-black text-white shadow-inner`}>
+                        {method.name.split(' ')[0]}
+                      </div>
+                      <div>
+                        <p className="font-bold text-sm text-white">{method.name}</p>
+                        <p className="text-xs text-zinc-400">{method.category}</p>
+                      </div>
+                    </div>
+                    {method.status === 'limit' ? (
+                      <span className="text-xs bg-red-500/20 text-red-400 px-2 py-1 rounded font-semibold">Gangguan</span>
+                    ) : (
+                      <div className="text-right">
+                        {selectedProduct ? (
+                          <p className="text-sm font-bold text-green-400">{formatRupiah(selectedProduct.price + method.fee)}</p>
+                        ) : (
+                          <p className="text-xs text-zinc-500">Biaya: {method.fee === 0 ? 'Gratis' : formatRupiah(method.fee)}</p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Step 4: Checkout */}
+            <div className={`bg-zinc-900 border ${formErrors.whatsapp ? 'border-red-500 shadow-red-500/20' : 'border-zinc-800'} rounded-3xl p-6 shadow-xl sticky top-24 transition-all`}>
+              <h2 className="text-xl font-bold flex items-center gap-3 mb-6">
+                <span className="w-8 h-8 rounded-full bg-green-500 text-black flex items-center justify-center font-black">4</span> 
+                Kontak & Beli
+              </h2>
+
+              <div className="mb-6">
+                <label className="block text-sm font-semibold text-zinc-400 mb-2">Nomor WhatsApp (Untuk Notifikasi)</label>
+                <div className="relative">
+                  <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400" />
+                  <input 
+                    type="tel" 
+                    placeholder="08123456789" 
+                    className={`w-full bg-zinc-950 border ${formErrors.whatsapp ? 'border-red-500 focus:border-red-500' : 'border-zinc-700 focus:border-green-500'} rounded-xl pl-12 pr-4 py-3 outline-none text-white font-medium transition-colors`}
+                    value={whatsapp}
+                    onChange={(e) => {
+                      setWhatsapp(e.target.value);
+                      if (formErrors.whatsapp) setFormErrors(prev => ({...prev, whatsapp: null}));
+                    }}
+                  />
+                </div>
+                {formErrors.whatsapp && (
+                  <p className="text-red-400 text-sm mt-2 font-medium flex items-center gap-1">
+                    <AlertTriangle className="w-4 h-4" /> {formErrors.whatsapp}
+                  </p>
+                )}
+              </div>
+
+              {/* Order Summary */}
+              <div className="bg-zinc-950 rounded-xl p-4 mb-6 border border-zinc-800">
+                <h3 className="text-sm font-bold text-white mb-3 border-b border-zinc-800 pb-2">Ringkasan Pesanan</h3>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-zinc-400">Akun</span>
+                    <span className="font-semibold">{isValidated ? username : '-'}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-zinc-400">Paket</span>
+                    <span className="font-semibold">{selectedProduct ? selectedProduct.amount : '-'}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-zinc-400">Pembayaran</span>
+                    <span className="font-semibold">{selectedPayment ? selectedPayment.name : '-'}</span>
+                  </div>
+                  <div className="flex justify-between pt-2 border-t border-zinc-800 mt-2">
+                    <span className="font-bold text-white">Total Bayar</span>
+                    <span className="font-black text-green-400 text-lg">
+                      {selectedProduct && selectedPayment ? formatRupiah(selectedProduct.price + selectedPayment.fee) : 'Rp 0'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <button 
+                onClick={handleCheckout}
+                className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-black font-black py-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-green-500/20 transform active:scale-95"
+              >
+                BELI SEKARANG <ArrowRight className="w-5 h-5" />
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </main>
+
+      {/* Order Tracker Section */}
+      <section id="order-tracker" className="py-16 bg-zinc-950 border-t border-zinc-900 relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl font-black mb-4">Cek Status Pesanan</h2>
+            <p className="text-zinc-400">Lacak transaksi kamu secara real-time di sini</p>
+          </div>
+
+          <div className="max-w-3xl mx-auto mb-12">
+            <form onSubmit={handleSearchTransaction} className="flex flex-col sm:flex-row gap-4">
+              <div className="relative flex-grow">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400" />
+                <input 
+                  type="text" 
+                  placeholder="Masukkan ID Transaksi (Cth: RBX-90182)" 
+                  className="w-full bg-zinc-900 border border-zinc-800 focus:border-green-500 rounded-xl pl-12 pr-4 py-4 outline-none text-white transition-colors"
+                  value={searchInvoice}
+                  onChange={(e) => setSearchInvoice(e.target.value)}
+                />
+              </div>
+              <button 
+                type="submit"
+                className="bg-zinc-800 hover:bg-zinc-700 text-white font-bold py-4 px-8 rounded-xl transition-colors border border-zinc-700"
+              >
+                Cari Pesanan
+              </button>
+            </form>
+
+            {foundInvoice && (
+              <div className={`mt-6 p-6 rounded-2xl border ${foundInvoice.error || foundInvoice.status === 'GAGAL' ? 'bg-red-500/10 border-red-500/30' : 'bg-green-500/10 border-green-500/30'} animate-fade-in`}>
+                {foundInvoice.error ? (
+                  <p className="text-red-400 text-center font-medium">{foundInvoice.error}</p>
+                ) : (
+                  <div>
+                    <div className="flex justify-between items-start mb-6">
+                      <div>
+                        <p className="text-zinc-400 text-sm mb-1">ID Transaksi</p>
+                        <p className="font-black text-xl text-white">{foundInvoice.id}</p>
+                      </div>
+                      <span className={`px-4 py-1.5 rounded-full text-sm font-bold ${
+                        foundInvoice.status === 'SUCCESS' ? 'bg-green-500/20 text-green-400 border border-green-500/30' :
+                        foundInvoice.status === 'GAGAL' ? 'bg-red-500/20 text-red-400 border border-red-500/30' :
+                        foundInvoice.status === 'PENDING' ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' :
+                        'bg-blue-500/20 text-blue-400 border border-blue-500/30'
+                      }`}>
+                        {foundInvoice.status}
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
+                      <div><p className="text-zinc-500 mb-1">Username</p><p className="font-semibold">{foundInvoice.username}</p></div>
+                      <div><p className="text-zinc-500 mb-1">Item</p><p className="font-semibold text-green-400">{foundInvoice.amount}</p></div>
+                      <div><p className="text-zinc-500 mb-1">Total</p><p className="font-semibold">{formatRupiah(foundInvoice.price)}</p></div>
+                      <div><p className="text-zinc-500 mb-1">Metode</p><p className="font-semibold">{foundInvoice.payment}</p></div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden">
+            <div className="p-6 border-b border-zinc-800 flex justify-between items-center">
+              <h3 className="font-bold flex items-center gap-2"><Clock className="w-5 h-5 text-green-400" /> Transaksi Terakhir</h3>
+              <div className="flex items-center gap-2 text-xs text-zinc-400">
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
+                </span>
+                Live Update
+              </div>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm whitespace-nowrap">
+                <thead className="bg-zinc-950/50 text-zinc-400">
+                  <tr>
+                    <th className="px-6 py-4 font-semibold">Waktu</th>
+                    <th className="px-6 py-4 font-semibold">Username</th>
+                    <th className="px-6 py-4 font-semibold">Item</th>
+                    <th className="px-6 py-4 font-semibold">Harga</th>
+                    <th className="px-6 py-4 font-semibold">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-800">
+                  {simulatedTransactions.map((tx, i) => (
+                    <tr key={i} className="hover:bg-zinc-800/30 transition-colors">
+                      <td className="px-6 py-4 text-zinc-400">{tx.date}</td>
+                      <td className="px-6 py-4 font-semibold">{tx.username.substring(0, 3)}***</td>
+                      <td className="px-6 py-4 font-bold text-white">{tx.amount}</td>
+                      <td className="px-6 py-4">{formatRupiah(tx.price)}</td>
+                      <td className="px-6 py-4">
+                        <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${
+                          tx.status === 'SUCCESS' ? 'bg-green-500/10 text-green-400' : 
+                          tx.status === 'GAGAL' ? 'bg-red-500/10 text-red-400' : 
+                          'bg-blue-500/10 text-blue-400'
+                        }`}>
+                          {tx.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="py-16 relative z-10 bg-zinc-950">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+             <h2 className="text-3xl font-black mb-4">Apa Kata Mereka?</h2>
+             <p className="text-zinc-400">Ribuan gamers sudah membuktikan kecepatan kami</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {TESTIMONIALS.map((testi, i) => (
+              <div key={i} className="bg-zinc-900 border border-zinc-800 p-6 rounded-3xl">
+                <div className="flex justify-between items-start mb-4">
+                  <div className="flex items-center gap-3">
+                    {getAvatarSvg(testi.name)}
+                    <div>
+                      <p className="font-bold">{testi.name}</p>
+                      <p className="text-xs text-zinc-500">{testi.date}</p>
+                    </div>
+                  </div>
+                  <div className="flex">
+                    {[...Array(testi.rating)].map((_, j) => (
+                      <Star key={j} className="w-4 h-4 fill-yellow-500 text-yellow-500" />
+                    ))}
+                  </div>
+                </div>
+                <p className="text-sm text-zinc-300 italic">"{testi.comment}"</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section id="faq-section" className="py-16 bg-zinc-900 border-t border-zinc-800 relative z-10">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl font-black mb-4">Pertanyaan Seputar Rubox</h2>
+          </div>
+          <div className="space-y-4">
+            {FAQS.map((faq, i) => (
+              <div key={i} className="bg-zinc-950 border border-zinc-800 p-5 rounded-2xl">
+                <h3 className="font-bold flex items-start gap-3 text-white">
+                  <HelpCircle className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                  {faq.q}
+                </h3>
+                <p className="text-zinc-400 text-sm mt-3 pl-8 leading-relaxed">{faq.a}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-zinc-950 border-t border-zinc-900 pt-16 pb-8 relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+            <div className="md:col-span-2">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="p-2 bg-green-500 rounded-xl">
+                  <ShoppingBag className="w-5 h-5 text-black" />
+                </div>
+                <span className="font-black text-xl tracking-tight">
+                  RUBOX<span className="text-green-400">STORE</span>
+                </span>
+              </div>
+              <p className="text-zinc-400 text-sm max-w-sm mb-6 leading-relaxed">
+                Platform top-up game andalan Indonesia. Murah, cepat, dan 100% aman terpercaya tanpa perlu password.
+              </p>
+              <div className="flex items-center gap-4">
+                <span className="text-sm font-bold text-zinc-500">Official Partner:</span>
+                <div className="flex gap-2">
+                  <div className="w-8 h-8 bg-zinc-900 rounded flex items-center justify-center border border-zinc-800"><span className="text-xs font-black text-zinc-600">Q</span></div>
+                  <div className="w-8 h-8 bg-zinc-900 rounded flex items-center justify-center border border-zinc-800"><span className="text-xs font-black text-zinc-600">G</span></div>
+                  <div className="w-8 h-8 bg-zinc-900 rounded flex items-center justify-center border border-zinc-800"><span className="text-xs font-black text-zinc-600">D</span></div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <h4 className="font-bold mb-4 text-white">Navigasi</h4>
+              <ul className="space-y-2 text-sm text-zinc-400">
+                <li><a href="#" className="hover:text-green-400 transition">Beranda</a></li>
+                <li><a href="#" className="hover:text-green-400 transition">Daftar Harga</a></li>
+                <li><a href="#" className="hover:text-green-400 transition">Lacak Pesanan</a></li>
+                <li><a href="#" className="hover:text-green-400 transition">Hubungi Kami</a></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-bold mb-4 text-white">Legal</h4>
+              <ul className="space-y-2 text-sm text-zinc-400">
+                <li><a href="#" className="hover:text-green-400 transition">Terms of Service</a></li>
+                <li><a href="#" className="hover:text-green-400 transition">Privacy Policy</a></li>
+                <li><a href="#" className="hover:text-green-400 transition">Refund Policy</a></li>
+              </ul>
+            </div>
+          </div>
+          <div className="border-t border-zinc-900 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-zinc-500">
+            <p>© 2024 RuboxStore. All rights reserved.</p>
+            <p>Not affiliated with Roblox Corporation.</p>
+          </div>
+        </div>
+      </footer>
+
+      {/* OVERLAYS & MODALS */}
+      
+      {/* 1. Live Toast Notification */}
+      {liveToast && (
+        <div className="fixed bottom-6 left-6 z-50 animate-slide-up">
+          <div className="bg-zinc-900 border border-zinc-800 shadow-2xl rounded-2xl p-4 flex items-center gap-4">
+             {getAvatarSvg(liveToast.name)}
+             <div>
+                <p className="text-xs text-zinc-400">Seseorang baru saja membeli</p>
+                <p className="font-bold text-white text-sm"><span className="text-green-400">{liveToast.package}</span></p>
+                <p className="text-xs font-medium text-zinc-500 mt-0.5">Barusan • Via Website</p>
+             </div>
+          </div>
+        </div>
+      )}
+
+      {/* 2. Floating Chatbot */}
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+        {botOpen && (
+          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl w-80 sm:w-96 mb-4 shadow-2xl overflow-hidden animate-scale-in">
+            <div className="bg-green-500 p-4 flex justify-between items-center">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                  <MessageCircle className="w-6 h-6 text-black" />
+                </div>
+                <div>
+                  <p className="font-black text-black">CS Rubox Bot</p>
+                  <p className="text-xs text-black/70 font-semibold flex items-center gap-1">
+                    <span className="w-2 h-2 bg-white rounded-full animate-pulse" /> Online
+                  </p>
+                </div>
+              </div>
+              <button onClick={() => setBotOpen(false)} className="text-black/50 hover:text-black transition">
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            <div className="h-80 overflow-y-auto p-4 space-y-4 bg-zinc-950/50">
+              {botMessages.map((msg, i) => (
+                <div key={i} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+                  <div className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm ${msg.sender === 'user' ? 'bg-green-500 text-black font-medium rounded-br-none' : 'bg-zinc-800 text-zinc-200 border border-zinc-700 rounded-bl-none'}`}>
+                    {msg.text.split('\n').map((line, j) => (
+                        <p key={j} className={j > 0 ? "mt-1" : ""}>{line}</p>
+                    ))}
+                  </div>
+                </div>
+              ))}
+              <div ref={chatEndRef} />
+            </div>
+            <form onSubmit={handleChatSubmit} className="p-3 bg-zinc-900 border-t border-zinc-800 flex gap-2">
+              <input 
+                type="text" 
+                placeholder="Ketik pesan..." 
+                className="flex-grow bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2 text-sm outline-none focus:border-green-500 transition"
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
+              />
+              <button type="submit" className="bg-green-500 text-black p-2.5 rounded-xl hover:bg-green-400 transition">
+                <Send className="w-4 h-4" />
+              </button>
+            </form>
+          </div>
+        )}
+        <button 
+          onClick={() => setBotOpen(!botOpen)}
+          className={`w-16 h-16 bg-green-500 rounded-full flex items-center justify-center shadow-lg shadow-green-500/30 text-black hover:bg-green-400 transition-all transform hover:scale-105 active:scale-95 ${botOpen ? 'rotate-90' : 'rotate-0'}`}
+        >
+          {botOpen ? <X className="w-8 h-8" /> : <MessageSquare className="w-8 h-8" />}
+        </button>
+      </div>
+
+      {/* 3. Invoice / Checkout Modal */}
+      {invoiceModalOpen && activeInvoice && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
+          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl w-full max-w-md overflow-hidden shadow-2xl relative max-h-[95vh] flex flex-col">
+            
+            {/* Header */}
+            <div className="p-5 border-b border-zinc-800 flex justify-between items-center bg-zinc-950">
+              <h3 className="font-bold text-lg">Detail Pembayaran</h3>
+              <button onClick={() => setInvoiceModalOpen(false)} className="text-zinc-400 hover:text-white">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Scrollable Content */}
+            <div className="p-6 overflow-y-auto custom-scrollbar flex-grow">
+              
+              {/* Status Header */}
+              {invoiceStatus === 'PENDING' && (
+                <div className="text-center mb-6">
+                  <p className="text-sm text-zinc-400 mb-2">Selesaikan pembayaran dalam</p>
+                  <p className="text-3xl font-black text-red-500 tracking-wider mb-2">{formatTime(paymentTimer)}</p>
+                  <p className="text-xs text-zinc-500">ID: <span className="font-mono text-zinc-300">{activeInvoice.id}</span></p>
+                </div>
+              )}
+              {invoiceStatus === 'PAID' && (
+                <div className="text-center mb-6 text-green-400">
+                  <CheckCircle2 className="w-16 h-16 mx-auto mb-2" />
+                  <p className="text-xl font-bold">Pembayaran Diterima</p>
+                  <p className="text-sm text-zinc-400">Sedang memvalidasi...</p>
+                </div>
+              )}
+              {invoiceStatus === 'PROCESSING' && (
+                <div className="text-center mb-6 text-blue-400">
+                  <RefreshCw className="w-16 h-16 mx-auto mb-2 animate-spin" />
+                  <p className="text-xl font-bold">Memproses Rubox</p>
+                  <p className="text-sm text-zinc-400">Mengirim ke {activeInvoice.username}...</p>
+                </div>
+              )}
+              {invoiceStatus === 'FAILED' && (
+                <div className="text-center mb-6 text-red-500">
+                  <XCircle className="w-16 h-16 mx-auto mb-2" />
+                  <p className="text-xl font-bold">Transaksi Gagal</p>
+                  <p className="text-sm text-zinc-400">Terjadi kesalahan atau pembayaran dibatalkan.</p>
+                </div>
+              )}
+
+              {/* Payment Info Box */}
+              {invoiceStatus === 'PENDING' && (
+                <div className="bg-zinc-950 border border-zinc-800 rounded-2xl p-5 mb-6">
+                  <div className="flex justify-between items-center mb-4 pb-4 border-b border-zinc-800">
+                    <span className="text-sm text-zinc-400">Metode</span>
+                    <span className="font-bold">{activeInvoice.payment}</span>
+                  </div>
+
+                  {activeInvoice.paymentId === 'qris' ? (
+                    <div className="text-center">
+                      <div className="bg-white p-4 rounded-xl inline-block mb-3">
+                        {/* Fake QR Code */}
+                        <img src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${activeInvoice.id}-${activeInvoice.total}`} alt="QRIS" className="w-32 h-32" />
+                      </div>
+                      <p className="text-xs text-zinc-400">Scan QRIS menggunakan aplikasi E-Wallet / M-Banking Anda</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <div>
+                        <p className="text-xs text-zinc-500 mb-1">Nomor Rekening / Virtual Account</p>
+                        <div className="flex justify-between items-center bg-zinc-900 px-4 py-3 rounded-xl border border-zinc-800">
+                          <span className="font-mono font-bold text-lg tracking-wider">{activeInvoice.accountNo}</span>
+                          <button onClick={() => copyToClipboard(activeInvoice.accountNo)} className="text-green-400 hover:text-green-300">
+                            {isCopied ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
+                          </button>
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-xs text-zinc-500 mb-1">Atas Nama</p>
+                        <p className="font-bold">{activeInvoice.accountName}</p>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="mt-4 pt-4 border-t border-zinc-800">
+                    <p className="text-xs text-zinc-500 mb-1">Total Pembayaran</p>
+                    <div className="flex justify-between items-center">
+                      <span className="font-black text-2xl text-green-400">{formatRupiah(activeInvoice.total)}</span>
+                      <button onClick={() => copyToClipboard(activeInvoice.total.toString())} className="text-zinc-400 hover:text-white">
+                        <Copy className="w-4 h-4" />
+                      </button>
+                    </div>
+                    <p className="text-[10px] text-zinc-500 mt-1">Sertakan nominal hingga 3 digit terakhir.</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Order Details Accordion */}
+              <div className="bg-zinc-950 border border-zinc-800 rounded-2xl p-5">
+                <h4 className="font-bold text-sm mb-4 text-white">Rincian Pesanan</h4>
+                <div className="space-y-3 text-sm">
+                  <div className="flex justify-between"><span className="text-zinc-500">Username</span><span className="font-semibold">{activeInvoice.username}</span></div>
+                  <div className="flex justify-between"><span className="text-zinc-500">Item</span><span className="font-bold text-green-400">{activeInvoice.amount}</span></div>
+                  <div className="flex justify-between"><span className="text-zinc-500">Harga Item</span><span>{formatRupiah(activeInvoice.price)}</span></div>
+                  <div className="flex justify-between"><span className="text-zinc-500">Biaya Layanan</span><span>{formatRupiah(activeInvoice.fee)}</span></div>
+                  <div className="flex justify-between"><span className="text-zinc-500">Tipe Pengiriman</span><span>{activeInvoice.methodType}</span></div>
+                  <div className="flex justify-between"><span className="text-zinc-500">WhatsApp</span><span>{activeInvoice.whatsapp}</span></div>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer Buttons */}
+            <div className="p-5 border-t border-zinc-800 bg-zinc-950">
+              {invoiceStatus === 'PENDING' ? (
+                <div className="space-y-3">
+                  <button 
+                    onClick={simulatePayment}
+                    className="w-full bg-green-500 hover:bg-green-400 text-black font-bold py-3.5 rounded-xl transition-all"
+                  >
+                    Selesaikan Pembayaran
+                  </button>
+                  <p className="text-xs text-center text-zinc-500">Dalam versi produksi, sistem akan mengecek mutasi otomatis.</p>
+                </div>
+              ) : invoiceStatus === 'FAILED' ? (
+                <button 
+                  onClick={() => {
+                    setInvoiceModalOpen(false);
+                    setUsername('');
+                    setIsValidated(false);
+                    setSelectedProduct(null);
+                    setWhatsapp('');
+                  }}
+                  className="w-full bg-zinc-800 hover:bg-zinc-700 text-white font-bold py-3.5 rounded-xl transition-all border border-zinc-700"
+                >
+                  Tutup & Kembali
+                </button>
+              ) : (
+                <button disabled className="w-full bg-zinc-800 text-zinc-500 font-bold py-3.5 rounded-xl cursor-not-allowed border border-zinc-700 flex items-center justify-center gap-2">
+                  <RefreshCw className="w-4 h-4 animate-spin" /> Mohon Tunggu...
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Tailwind Utility style */}
+      <style dangerouslySetInnerHTML={{__html: `
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #52525b; }
+        
+        @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+        .animate-fade-in { animation: fade-in 0.3s ease-out forwards; }
+        
+        @keyframes slide-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-slide-up { animation: slide-up 0.4s ease-out forwards; }
+        
+        @keyframes scale-in { from { opacity: 0; transform: scale(0.95); transform-origin: bottom right; } to { opacity: 1; transform: scale(1); transform-origin: bottom right; } }
+        .animate-scale-in { animation: scale-in 0.2s ease-out forwards; }
+      `}} />
+    </div>
+  );
+}
